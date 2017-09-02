@@ -1,8 +1,9 @@
 var ClozeCard = require('./ClozeCard.js');
 var BasicCard = require('./BasicCard.js');
 var inquirer = require('inquirer');
-var basicCount = 0;
-var clozeCount = 0;
+var clozeCards = [];
+var basicCards = [];
+
 
 function userInput() {
   inquirer.prompt([
@@ -17,11 +18,12 @@ function userInput() {
   });
 }
 
+
 function newCard() {
   inquirer.prompt([
     {
       name: "cardChoice",
-      message: "Would you like to create basic cards or cloze deleted cards? Type b for basic and c for cloze."
+      message: "Would you like to create basic cards or cloze deleted cards? Type b for basic or c for cloze."
     }
   ]).then(function (answers) {
     if (answers.cardChoice === "b") {
@@ -32,8 +34,6 @@ function newCard() {
   });
 }
 
-
-var basicCards = [];
 
 function basicCard() {
   inquirer.prompt([
@@ -47,22 +47,22 @@ function basicCard() {
     },
     {
       name: "choice",
-      message: "Would you like to make another card or play? Type c for card and p for play."
+      message: "Your flashcard has been added to the deck. Would you like to make another card or play? Type c for new card or p for play."
     }
   ]).then(function (answers) {
     var basicC = new BasicCard(answers.front, answers.back);
     basicCards.push(basicC);
-    console.log("Your flashcard has been added to the deck.");
     if (answers.choice === "c") {
       basicCard();
     } else if (answers.choice = "p") {
+      console.log("You will have 10 seconds for each card. Ready?");
       playBasic();
     }
   });
 }
 
 
-var clozeCards = [];
+
 
 function clozeCard() {
   inquirer.prompt([
@@ -73,76 +73,72 @@ function clozeCard() {
     {
       name: "cloze",
       message: "What would you like the cloze deletion of your card to be?"
-    },
-    {
-      name: "choice",
-      message: "Would you like to make another card or play? Type c for card and p for play."
     }
   ]).then(function (answers) {
     if (!answers.text.includes(answers.cloze)) {
-      console.log("Oops! Your cloze isn't found in your text.  Let's try again...");
-      clozeCard();
+      inquirer.prompt([
+        {
+          name: "error",
+          message: "Oops! Your cloze deletion isn't part of your full text.  Let's try again.  Type c to continue."
+        }
+      ]).then(function (answers) {
+        clozeCard();
+      })
     } else {
-      var clozeC = new ClozeCard(answers.text, answers.cloze);
-      clozeCards.push(clozeC);
-      console.log(clozeCards);
-      console.log("Your flashcard has been added to the deck.");
-      if (answers.choice === "c") {
-        basicCard();
-      } else if (answers.choice = "p") {
-        playCloze();
-      }
+      inquirer.prompt([
+        {
+          name: "choice",
+          message: "Your flashcard has been added to the deck. Would you like to make another card or play? Type c for card or p for play."
+        }
+      ]).then(function (answer) {
+        var clozeC = new ClozeCard(answers.text, answers.cloze);
+        clozeCards.push(clozeC);
+        if (answer.choice === "c") {
+          clozeCard();
+        } else if (answer.choice === "p") {
+          console.log("You will have 10 seconds for each card. Ready?");
+          playCloze();
+        }
+      })
     }
-
   });
 }
 
 
 
 function playBasic() {
-  console.log("You will have 30 seconds for each card. Ready?");
   var randomIndex = Math.floor(Math.random() * basicCards.length);
-  console.log(randomIndex);
   setTimeout(function () {
-    console.log(basicCards[randomIndex].front);
+    console.log("\n" + basicCards[randomIndex].front);
   }, 2000);
   setTimeout(function () {
     console.log(basicCards[randomIndex].back);
-  }, 3000);
+  }, 10000);
   setTimeout(function () {
     basicCards.splice(randomIndex, 1);
-    basicCount++;
-    console.log("basiccount: " + basicCount);
-    console.log("basicCards.length: " + basicCards.length);
-    if (basicCount <= basicCards.length) {
+    if (basicCards.length > 0) {
       playBasic();
     }
-  }, 4000);
+  }, 10100);
 }
 
 
 
 
 function playCloze() {
-  console.log("You will have 30 seconds for each card. Ready?");
-  var randomIndex = Math.floor(Math.random() * basicCards.length);
-  console.log(randomIndex);
+  var randomIndex = Math.floor(Math.random() * clozeCards.length);
   setTimeout(function () {
-
-    console.log(clozeCards[randomIndex].partial);
+    console.log("\n" + clozeCards[randomIndex].partial);
   }, 2000);
   setTimeout(function () {
     console.log(clozeCards[randomIndex].cloze);
-  }, 3000);
+  }, 10000);
   setTimeout(function () {
     clozeCards.splice(randomIndex, 1);
-    clozeCount++;
-    console.log("clozecount: " + clozeCount);
-    console.log("clozeCards.length: " + clozeCards.length);
-    if (clozeCount <= clozeCards.length) {
+    if (clozeCards.length > 0) {
       playCloze();
     }
-  }, 4000);
+  }, 10100);
 }
 
 
