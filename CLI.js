@@ -55,7 +55,7 @@ function basicCard() {
     if (answers.choice === "c") {
       basicCard();
     } else if (answers.choice = "p") {
-      console.log("You will have 10 seconds for each card. Ready?");
+      console.log("You will have 5 seconds for each card. Ready?");
       playBasic();
     }
   });
@@ -96,7 +96,7 @@ function clozeCard() {
         if (answer.choice === "c") {
           clozeCard();
         } else if (answer.choice === "p") {
-          console.log("You will have 10 seconds for each card. Ready?");
+          console.log("You will have 5 seconds for each card. Ready?");
           playCloze();
         }
       })
@@ -113,13 +113,13 @@ function playBasic() {
   }, 2000);
   setTimeout(function () {
     console.log(basicCards[randomIndex].back);
-  }, 10000);
+  }, 5000);
   setTimeout(function () {
     basicCards.splice(randomIndex, 1);
     if (basicCards.length > 0) {
       playBasic();
     }
-  }, 10100);
+  }, 5100);
 }
 
 
@@ -131,14 +131,14 @@ function playCloze() {
     console.log("\n" + clozeCards[randomIndex].partial);
   }, 2000);
   setTimeout(function () {
-    console.log(clozeCards[randomIndex].cloze);
-  }, 10000);
+    console.log(clozeCards[randomIndex].text);
+  }, 5000);
   setTimeout(function () {
     clozeCards.splice(randomIndex, 1);
     if (clozeCards.length > 0) {
       playCloze();
     }
-  }, 10100);
+  }, 5100);
 }
 
 
