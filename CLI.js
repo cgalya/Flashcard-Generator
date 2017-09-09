@@ -75,7 +75,9 @@ function clozeCard() {
       message: "What would you like the cloze deletion of your card to be?"
     }
   ]).then(function (answers) {
-    if (!answers.text.includes(answers.cloze)) {
+    var lowerText = answers.text.toLowerCase();
+    var lowerCloze = answers.cloze.toLowerCase();
+    if (!lowerText.includes(lowerCloze)) {
       inquirer.prompt([
         {
           name: "error",
